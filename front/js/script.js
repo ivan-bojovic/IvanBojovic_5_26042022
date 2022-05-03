@@ -3,10 +3,13 @@ fetch("http://localhost:3000/api/products")
     .then((response) => {
         return response.json()
     })
+
     //Récupère la liste des produits//
     .then((products) => {
+
     //Boucle pour tous les produits//
     for (i = 0; i < products.length; i++) {
+
         //Ajouter dans le html avec le getElementById le html suivant//
         document.getElementById("items").innerHTML += 
         `<a href="./product.html?id=${products[i]._id}">
@@ -18,6 +21,7 @@ fetch("http://localhost:3000/api/products")
         </a>`
     }   
 })
+
     //Gestion en cas d'erreur//
     .catch((error) => {
         alert('error')
