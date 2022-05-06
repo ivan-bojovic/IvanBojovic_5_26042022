@@ -2,13 +2,12 @@
 let products = JSON.parse(localStorage.getItem("produits"))
 console.table(products)
 
-productSelect()
 
 //Récupérer et utiliser l'ID qui correspond a l'article selectionné//
 let params = (new URL(document.location)).searchParams
 const articleId = params.get("id")
 
-async function getElementById (articleId) {
+async function elementId(articleId) {
      return fetch("http://localhost:3000/api/products//" + articleId)
     .then((res) =>{
         return res.json()
@@ -20,8 +19,9 @@ async function getElementById (articleId) {
 
 //Récuperer les données pour injecter dans l html//
 async function productSelect () {
+
     for (let article in products) {
-        const product = await getElementById(products[article].articleId)
+        const product = await elementId(products[article].articleId)
 
         //Balise article//
         let newArticle = document.createElement("article")
@@ -97,6 +97,79 @@ async function productSelect () {
         //Supprimer le produit//
         let pDelete = document.createElement("p")
         divDelete.appendChild(pDelete)
+        pDelete.classList.add("deleteItem")
         pDelete.innerHTML = "Supprimer"
     }
 }
+productSelect ()
+
+//Calculer le total de la quantité//
+async function getTotals () {
+
+    let totalQty = 0
+    for (let article in products) {
+        totalQty += Number(products[article].articleQuantity)
+        let quantityTotal = document.getElementById("totalQuantity")
+        quantityTotal.innerHTML = totalQty
+    }
+
+    //Calcule la totalité du prix//
+    let totalPrice = 0
+    const priceTotal = document.getElementById("totalPrice")
+    for (let article in products) {
+        const product = await elementId(products[article].articleId)
+        const productsPrice = Number(product.price * products[article].articleQuantity)
+        totalPrice += productsPrice
+        priceTotal.innerHTML = totalPrice
+    }
+    modifyQuantity()
+    productDelete()
+}
+getTotals ()
+
+//Modification de la quantité//
+function modifyQuantity() {
+
+    let inputQuantity = document.querySelectorAll(".itemQuantity")
+    for (let i =0; i < inputQuantity.length; i++) {
+        inputQuantity[i].addEventListener("change", (e) => {
+            e.preventDefault()
+
+            let inputValue = Number(e.target.value)
+            let dataId = products[i].articleId
+            let dataColor = products[i].articleColor
+
+            if(products) {
+                let result = products.find((total) => total.articleId === dataId && total.articleColor === dataColor)
+            
+            if(result) {
+                products[i].articleQuantity = inputValue
+                localStorage.setItem("produits", JSON.stringify(products))
+            }}
+            //Reload la page pour mettre a jour le total//
+            location.reload()
+        })
+    }
+}
+modifyQuantity()
+
+//Suppression d'un produit dans le panier//
+function productDelete () {
+
+    let buttonDelete = document.querySelectorAll(".deleteItem")
+    for (let i = 0; i < buttonDelete.length; i++) {
+        buttonDelete[i].addEventListener("click", (e) => {
+            e.preventDefault()
+
+            let deleteId = products[i].articleId
+            let deleteColor = products[i].articleColor
+    
+            products = products.filter((element) => element.articleId !== deleteId || element.articleColor !== deleteColor)
+
+            alert("Article supprimé")            
+            localStorage.setItem("produits", JSON.stringify(products))
+            location.reload()            
+        })
+    }
+}
+productDelete()

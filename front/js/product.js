@@ -63,7 +63,7 @@ let recordProduct = (product) => {
         let listingProducts = {
             articleId: id,
             articleColor: colorChoise,
-            articleQuantity: quantityChoice,
+            articleQuantity: Number(quantityChoice),
         }
         console.log(listingProducts)
 
