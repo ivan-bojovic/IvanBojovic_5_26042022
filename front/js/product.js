@@ -16,6 +16,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
     //Gestion en cas d'erreur//
     .catch((error) => {
         alert('error')
+        window.location.href = "index.html"
     })
 
     //Répartition des données de l'API dans le DOM//
@@ -68,37 +69,37 @@ let recordProduct = (product) => {
         console.log(listingProducts)
 
         //Créer le localstorage//
-        let products = JSON.parse(localStorage.getItem("produits"))
+        let cartProducts = JSON.parse(localStorage.getItem("produits"))
 
         //Si le produit commandé n'est pas dans le panier//
-        if (products) {
+        if (cartProducts) {
 
             //verification si l'article n'existe dèjà dans le panier//
-            const getProduct = products.find (
+            const getProduct = cartProducts.find (
                 (element) => element.articleId == listingProducts.articleId && element.articleColor == listingProducts.articleColor)
 
         //S'il est déjà present, ajouter seulement la quantité//
         if (getProduct) {
             getProduct.articleQuantity = Number(getProduct.articleQuantity) + Number(listingProducts.articleQuantity)
-            localStorage.setItem ("produits", JSON.stringify(products))
+            localStorage.setItem ("produits", JSON.stringify(cartProducts))
             toOrder()
         
         } else {
 
         //J’ajoute un autre produit au tableau//
-            products.push(listingProducts)
-            localStorage.setItem("produits", JSON.stringify(products))
+            cartProducts.push(listingProducts)
+            localStorage.setItem("produits", JSON.stringify(cartProducts))
             toOrder()
-            console.log(products)
+            console.log(cartProducts)
         }}
 
         //Si le panier est vide//
         else {
-            products = []
-            products.push(listingProducts)
-            localStorage.setItem("produits", JSON.stringify(products))
+            cartProducts = []
+            cartProducts.push(listingProducts)
+            localStorage.setItem("produits", JSON.stringify(cartProducts))
             toOrder ()
-            console.log(products)
+            console.log(cartProducts)
         }}
     })
 }
